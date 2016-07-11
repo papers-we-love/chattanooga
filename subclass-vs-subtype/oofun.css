@@ -1,0 +1,8 @@
+html.blur .backgrounds {
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(10px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(2px);
+    opacity: 0.4
+}
