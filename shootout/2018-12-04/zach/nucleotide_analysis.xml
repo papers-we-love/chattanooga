@@ -1,0 +1,314 @@
+<skuidpage unsavedchangeswarning="no" personalizationmode="client" title="PWL: Nucleotide Analysis">
+	<models>
+		<model id="Input" limit="20" query="true" createrowifnonefound="true" datasource="Ui-Only">
+			<fields>
+				<field id="Input" displaytype="TEXT" label="Input" defaultvaluetype="fieldvalue" defaultValue="AGGTCCTACCTTA"/>
+				<field id="Length" displaytype="FORMULA" label="Length" ogdisplaytype="TEXT" readonly="true" returntype="DOUBLE" precision="9" scale="0">
+					<formula>LEN({{Input}})</formula>
+				</field>
+			</fields>
+			<conditions/>
+			<actions/>
+		</model>
+		<model id="Compute" limit="20" query="true" createrowifnonefound="true" datasource="Ui-Only">
+			<fields>
+				<field id="Index" displaytype="DOUBLE" label="Index" ogdisplaytype="TEXT" precision="9" scale="0" defaultvaluetype="fieldvalue" defaultValue="0"/>
+				<field id="Var" displaytype="TEXT" label="Current Character" ogdisplaytype="TEXT"/>
+				<field id="InProgress" displaytype="BOOLEAN" label="In Progresss" ogdisplaytype="TEXT" defaultvaluetype="fieldvalue" defaultValue="false"/>
+				<field id="StartTime" displaytype="DATETIME" ogdisplaytype="TEXT" label="Start Time"/>
+				<field id="TotalDuration" displaytype="DOUBLE" label="Duration (ms)" ogdisplaytype="TEXT" precision="9" scale="0"/>
+			</fields>
+			<conditions/>
+			<actions/>
+		</model>
+		<model id="Outputs" limit="20" query="true" createrowifnonefound="true" datasource="Ui-Only">
+			<fields>
+				<field id="NumA" displaytype="DOUBLE" label="Number of A" ogdisplaytype="TEXT" precision="9" scale="0" defaultvaluetype="fieldvalue" defaultValue="0"/>
+				<field id="NumG" displaytype="DOUBLE" label="Number of G" ogdisplaytype="TEXT" precision="9" scale="0" defaultvaluetype="fieldvalue" defaultValue="0"/>
+				<field id="NumC" displaytype="DOUBLE" label="Number of C" ogdisplaytype="TEXT" precision="9" scale="0" defaultvaluetype="fieldvalue" defaultValue="0"/>
+				<field id="NumT" displaytype="DOUBLE" label="Number of T" ogdisplaytype="TEXT" precision="9" scale="0" defaultvaluetype="fieldvalue" defaultValue="0"/>
+			</fields>
+			<conditions/>
+			<actions/>
+		</model>
+		<model id="Iteration" limit="20" query="true" createrowifnonefound="false" datasource="Ui-Only" label="Iteration" labelplural="Iterations">
+			<fields>
+				<field id="Index" displaytype="DOUBLE" label="Index" ogdisplaytype="TEXT" precision="9" scale="0" defaultvaluetype="fieldvalue" defaultValue="0"/>
+				<field id="Var" displaytype="TEXT" label="Current Character" ogdisplaytype="TEXT"/>
+			</fields>
+			<conditions/>
+			<actions/>
+		</model>
+	</models>
+	<components>
+		<wrapper uniqueid="sk-1_A3-630">
+			<components>
+				<pagetitle model="Compute" uniqueid="sk-1_7T-1611">
+					<maintitle>Nucleotide Analysis</maintitle>
+					<actions/>
+				</pagetitle>
+				<grid uniqueid="sk-1xxE-356">
+					<divisions>
+						<division behavior="flex" minwidth="100px" ratio="1" verticalalign="top">
+							<components>
+								<basicfieldeditor showheader="true" showsavecancel="false" showerrorsinline="true" model="Input" uniqueid="sk-1xl--381" mode="edit" layout="above">
+									<columns>
+										<column width="100%" uniqueid="sk-1xl--377">
+											<sections>
+												<section title="Enter input" uniqueid="sk-1xl--378" collapsible="no" showheader="false">
+													<fields>
+														<field uniqueid="sk-1xm1-397" id="Input">
+															<label>Input Nucleotide Sequence</label>
+														</field>
+													</fields>
+												</section>
+											</sections>
+										</column>
+									</columns>
+								</basicfieldeditor>
+							</components>
+						</division>
+					</divisions>
+					<styles>
+						<styleitem type="background" bgtype="none"/>
+					</styles>
+				</grid>
+				<buttonset uniqueid="sk-1_CL-380" position="left">
+					<buttons>
+						<button type="multi" label="Analyze" uniqueid="sk-1xmC-408">
+							<actions>
+								<action type="action-sequence" action-sequence-id="e0bd209e-bb7a-48ba-86a8-f09ee32528bb"/>
+								<action type="updateRow" fieldmodel="Compute" affectedrows="all">
+									<updates>
+										<update valuesource="fieldvalue" field="InProgress" enclosevalueinquotes="false" value="true"/>
+										<update valuesource="fieldvalue" field="StartTime" enclosevalueinquotes="false" value="NOW"/>
+									</updates>
+								</action>
+								<action type="action-sequence" action-sequence-id="4b7f30b0-43e8-4c47-b87f-4a8601d32bcf"/>
+								<action type="updateRow" fieldmodel="Compute" affectedrows="all">
+									<updates>
+										<update valuesource="fieldvalue" field="InProgress" enclosevalueinquotes="false" value="false"/>
+										<update valuesource="formula" field="TotalDuration" enclosevalueinquotes="false">
+											<formula>NOW() - {{{$Model.Compute.data.0.StartTime}}}</formula>
+										</update>
+									</updates>
+								</action>
+							</actions>
+							<renderconditions logictype="and"/>
+							<enableconditions logictype="and">
+								<condition type="blank" operator="!=" fieldmodel="Input" sourcetype="fieldvalue" nosourcerowbehavior="deactivate" field="Input" value="null" enclosevalueinquotes="false"/>
+							</enableconditions>
+							<hotkeys/>
+						</button>
+						<button type="multi" label="Show Stack Trace" uniqueid="sk-1_7b-1692" secondary="true">
+							<actions>
+								<action type="openSlidingPanel" openbehavior="open">
+									<panel title="Sliding Panel Contents" uniqueid="sk-1_7i-1755" size="40%" origin="right" closeonpageclick="false" behavior="push">
+										<components>
+											<pagetitle model="Iteration" uniqueid="sk-1_7w-1816">
+												<maintitle>Stack Trace</maintitle>
+												<actions>
+													<action type="multi" label="Close" uniqueid="sk-1_7z-1852" icon="sk-icon-cancel">
+														<actions>
+															<action type="closeSlidingPanel" closebehavior="close"/>
+														</actions>
+													</action>
+												</actions>
+											</pagetitle>
+											<basicfieldeditor showheader="true" showsavecancel="false" showerrorsinline="true" model="Compute" uniqueid="sk-1_8C-1955" mode="readonly">
+												<columns>
+													<column width="100%" uniqueid="sk-1_8C-1956">
+														<sections>
+															<section title="Current Iteration" uniqueid="sk-1_8C-1957" collapsible="no">
+																<fields>
+																	<field uniqueid="sk-1_8C-1958" id="Index"/>
+																	<field uniqueid="sk-1_8C-1959" id="Var"/>
+																</fields>
+															</section>
+															<section title="Stats" collapsible="no" uniqueid="sk-1_EW-932">
+																<fields>
+																	<field uniqueid="sk-1_EY-950" id="TotalDuration"/>
+																</fields>
+															</section>
+														</sections>
+													</column>
+												</columns>
+											</basicfieldeditor>
+											<skootable showconditions="true" showsavecancel="false" showerrorsinline="true" searchmethod="client" searchbox="true" showexportbuttons="false" hideheader="false" hidefooter="false" pagesize="10" alwaysresetpagination="false" createrecords="false" model="Iteration" buttonposition="" mode="readonly" allowcolumnreordering="true" responsive="true" uniqueid="sk-1_7r-1775" heading="All Iterations">
+												<fields>
+													<field id="Index" hideable="true" uniqueid="fi-1_7u-1806"/>
+													<field id="Var" hideable="true" uniqueid="fi-1_7u-1807"/>
+												</fields>
+												<rowactions/>
+												<massactions usefirstitemasdefault="true"/>
+												<views>
+													<view type="standard"/>
+												</views>
+											</skootable>
+										</components>
+										<interactions/>
+									</panel>
+								</action>
+							</actions>
+						</button>
+						<button type="multi" label="Reset" uniqueid="sk-1_9r-584">
+							<actions>
+								<action type="action-sequence" action-sequence-id="e0bd209e-bb7a-48ba-86a8-f09ee32528bb"/>
+							</actions>
+						</button>
+					</buttons>
+				</buttonset>
+				<richtext multiple="false" uniqueid="sk-1_JX-389">
+					<contents>&lt;h2&gt;Computation in progress...&lt;/h2&gt;</contents>
+					<renderconditions logictype="and">
+						<rendercondition type="fieldvalue" operator="=" enclosevalueinquotes="false" fieldmodel="Compute" sourcetype="fieldvalue" nosourcerowbehavior="deactivate" field="InProgress" value="true"/>
+					</renderconditions>
+				</richtext>
+				<basicfieldeditor showheader="true" showsavecancel="false" showerrorsinline="true" model="Outputs" uniqueid="sk-1xxT-572" mode="readonly">
+					<columns>
+						<column width="100%" uniqueid="sk-1xxT-568">
+							<sections>
+								<section title="Results" uniqueid="sk-1xxT-569" collapsible="no">
+									<fields>
+										<field uniqueid="sk-1xxa-621" id="NumA"/>
+										<field uniqueid="sk-1xxa-622" id="NumC"/>
+										<field uniqueid="sk-1xxa-623" id="NumG"/>
+										<field uniqueid="sk-1xxa-624" id="NumT"/>
+									</fields>
+									<renderconditions logictype="and"/>
+								</section>
+							</sections>
+						</column>
+					</columns>
+					<renderconditions logictype="and">
+						<rendercondition type="fieldvalue" operator="!=" enclosevalueinquotes="false" fieldmodel="Compute" sourcetype="fieldvalue" nosourcerowbehavior="deactivate" field="InProgress" value="true"/>
+					</renderconditions>
+				</basicfieldeditor>
+			</components>
+			<styles>
+				<styleitem type="background" bgtype="none"/>
+				<styleitem type="border" margin="all">
+					<styles>
+						<styleitem property="margin" value="50px"/>
+						<styleitem property="box-sizing" value="border-box"/>
+					</styles>
+				</styleitem>
+				<styleitem type="size"/>
+			</styles>
+		</wrapper>
+	</components>
+	<resources>
+		<labels/>
+		<javascript/>
+		<css/>
+		<actionsequences uniqueid="sk-1xlz-344">
+			<actionsequence id="4b7f30b0-43e8-4c47-b87f-4a8601d32bcf" label="Examine Character" type="reusable" uniqueid="sk-1xw6-1214">
+				<actions>
+					<action type="updateRow" fieldmodel="Compute" affectedrows="all">
+						<updates>
+							<update valuesource="formula" field="Var" enclosevalueinquotes="true">
+								<formula>LEFT(RIGHT({{{$Model.Input.data.0.Input}}}, {{{$Model.Input.data.0.Length}}} - {{{$Model.Compute.data.0.Index}}}), 1)</formula>
+							</update>
+						</updates>
+					</action>
+					<action type="createRow" model="Iteration" appendorprepend="prepend" defaultmodefornewitems="edit" affectedrows="context">
+						<defaults>
+							<default valuesource="modelmerge" field="Var" enclosevalueinquotes="true" sourcemodel="Compute" sourcefield="Var"/>
+							<default valuesource="modelmerge" field="Index" enclosevalueinquotes="false" sourcemodel="Compute" sourcefield="Index"/>
+						</defaults>
+					</action>
+					<action type="branch" whenfinished="continue" label="If A" model="Compute">
+						<formula>{{{Var}}} == "A"</formula>
+						<iftrueactions>
+							<action type="updateRow" fieldmodel="Outputs" affectedrows="context">
+								<updates>
+									<update valuesource="formula" field="NumA" enclosevalueinquotes="false">
+										<formula>{{{$Model.Outputs.data.0.NumA}}} + 1</formula>
+									</update>
+								</updates>
+							</action>
+						</iftrueactions>
+					</action>
+					<action type="branch" whenfinished="continue" label="If G" model="Compute">
+						<formula>{{{Var}}} == "G"</formula>
+						<iftrueactions>
+							<action type="updateRow" fieldmodel="Outputs" affectedrows="context">
+								<updates>
+									<update valuesource="formula" field="NumG" enclosevalueinquotes="false">
+										<formula>{{{$Model.Outputs.data.0.NumG}}} + 1</formula>
+									</update>
+								</updates>
+							</action>
+						</iftrueactions>
+					</action>
+					<action type="branch" whenfinished="continue" label="If C" model="Compute">
+						<formula>{{{Var}}} == "C"</formula>
+						<iftrueactions>
+							<action type="updateRow" fieldmodel="Outputs" affectedrows="context">
+								<updates>
+									<update valuesource="formula" field="NumC" enclosevalueinquotes="false">
+										<formula>{{{$Model.Outputs.data.0.NumC}}} + 1</formula>
+									</update>
+								</updates>
+							</action>
+						</iftrueactions>
+					</action>
+					<action type="branch" whenfinished="continue" label="If T" model="Compute">
+						<formula>{{{Var}}} == "T"</formula>
+						<iftrueactions>
+							<action type="updateRow" fieldmodel="Outputs" affectedrows="context">
+								<updates>
+									<update valuesource="formula" field="NumT" enclosevalueinquotes="false">
+										<formula>{{{$Model.Outputs.data.0.NumT}}} + 1</formula>
+									</update>
+								</updates>
+							</action>
+						</iftrueactions>
+					</action>
+					<action type="branch" whenfinished="stop" model="Compute" label="If we are NOT done">
+						<formula>{{{Index}}} &lt; ({{{$Model.Input.data.0.Length}}} - 1)</formula>
+						<iftrueactions>
+							<action type="updateRow" fieldmodel="Compute" affectedrows="all">
+								<updates>
+									<update valuesource="formula" field="Index" enclosevalueinquotes="false">
+										<formula>{{{Index}}}+1</formula>
+									</update>
+								</updates>
+							</action>
+							<action type="action-sequence" action-sequence-id="4b7f30b0-43e8-4c47-b87f-4a8601d32bcf"/>
+						</iftrueactions>
+					</action>
+				</actions>
+			</actionsequence>
+			<actionsequence id="e0bd209e-bb7a-48ba-86a8-f09ee32528bb" label="Reset" type="reusable" uniqueid="sk-1_AY-703">
+				<description>Resets all models</description>
+				<actions>
+					<action type="updateRow" fieldmodel="Compute" affectedrows="context">
+						<updates>
+							<update valuesource="blank" field="Var" enclosevalueinquotes="true"/>
+							<update valuesource="fieldvalue" field="Index" enclosevalueinquotes="false" value="0"/>
+							<update valuesource="blank" field="StartTime" enclosevalueinquotes="false"/>
+							<update valuesource="blank" field="TotalDuration" enclosevalueinquotes="false"/>
+						</updates>
+					</action>
+					<action type="updateRow" fieldmodel="Outputs" affectedrows="context">
+						<updates>
+							<update valuesource="fieldvalue" field="NumA" enclosevalueinquotes="false" value="0"/>
+							<update valuesource="fieldvalue" field="NumC" enclosevalueinquotes="false" value="0"/>
+							<update valuesource="fieldvalue" field="NumG" enclosevalueinquotes="false" value="0"/>
+							<update valuesource="fieldvalue" field="NumT" enclosevalueinquotes="false" value="0"/>
+						</updates>
+					</action>
+					<action type="emptyModelData">
+						<models>
+							<model>Iteration</model>
+						</models>
+					</action>
+				</actions>
+			</actionsequence>
+		</actionsequences>
+	</resources>
+	<styles>
+		<styleitem type="background" bgtype="none"/>
+	</styles>
+</skuidpage>
