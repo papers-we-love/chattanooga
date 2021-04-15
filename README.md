@@ -20,7 +20,7 @@ This is the repository for the Chattanooga chapter of Papers We Love. As a local
 
 + **Neil Menne**:
 	- *Email*: [nhm@neilmenne.com](mailto:nhm@neilmenne.com)
-	- *Twitter*: [@the1evilgenius](https://twitter.com/neilmenne)
+	- *Twitter*: [@neilmenne](https://twitter.com/neilmenne)
 + **Noel Weichbrodt**:
 	- *Email*: [noel@weichbrodt.org](mailto:noel@weichbrodt.org)
 	- *Twitter*: [@noelweichbrodt](https://twitter.com/noelweichbrodt)
